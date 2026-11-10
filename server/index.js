@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 // ===== ROUTES (aage ke days mein yaha add honge) =====
+app.use("/api/auth", authRoutes);
 
 // Error handler (hamesha sabse neeche)
 app.use((err, req, res, next) => {
