@@ -5,6 +5,7 @@ import helmet from "helmet";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import projectRoutes from "./routes/projects.js";
+import ticketRoutes from "./routes/tickets.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 // ===== ROUTES (aage ke days mein yaha add honge) =====
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 // Error handler (hamesha sabse neeche)
 app.use((err, req, res, next) => {
