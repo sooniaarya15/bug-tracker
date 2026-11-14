@@ -2,6 +2,7 @@ import { Router } from "express";
 import Ticket from "../models/Ticket.js";
 import Project from "../models/Project.js";
 import auth from "../middleware/auth.js";
+import Comment from "../models/Comment.js";
 
 const router = Router();
 router.use(auth);
@@ -96,6 +97,7 @@ router.delete("/:id", async (req, res) => {
   const { role } = await access(ticket.project, req.user._id);
   const allowed = role === "admin" || String(ticket.reporter) === String(req.user._id);
   if (!allowed) return res.status(403).json({ message: "Only the reporter or an admin can delete" });
+  await Comment.deleteMany({ ticket: ticket._id });
   await ticket.deleteOne();
   res.json({ message: "Ticket deleted" });
 });

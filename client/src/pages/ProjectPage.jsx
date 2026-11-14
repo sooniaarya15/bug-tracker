@@ -8,6 +8,7 @@ import TicketForm from "../components/TicketForm";
 import TicketCard from "../components/TicketCard";
 import MembersPanel from "../components/MembersPanel";
 import Board from "../components/Board";
+import TicketModal from "../components/TicketModal";
 
 export default function ProjectPage() {
   const { id } = useParams();
@@ -111,7 +112,17 @@ export default function ProjectPage() {
         </div>
       )}
 
-      {/* DAY 9: TicketModal yaha aayega */}
+            {selected && (
+        <TicketModal
+          ticket={selected}
+          project={project}
+          me={user}
+          canEdit={canEdit}
+          isAdmin={isAdmin}
+          onClose={() => setSelected(null)}
+          onChanged={refreshTickets}
+        />
+      )}
     </div>
   );
 }

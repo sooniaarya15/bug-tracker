@@ -3,6 +3,7 @@ import Project from "../models/Project.js";
 import User from "../models/User.js";
 import auth from "../middleware/auth.js";
 import Ticket from "../models/Ticket.js";
+import Comment from "../models/Comment.js";
 
 const router = Router();
 router.use(auth);
@@ -66,6 +67,8 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const project = await loadProject(req, res, true);
   if (!project) return;
+  const ids = await Ticket.find({ project: project._id }).distinct("_id");
+  await Comment.deleteMany({ ticket: { $in: ids } });
   await Ticket.deleteMany({ project: project._id });
   await project.deleteOne();
   res.json({ message: "Project deleted" });
