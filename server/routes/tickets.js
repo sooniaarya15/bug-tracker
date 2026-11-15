@@ -19,12 +19,24 @@ async function access(projectId, userId) {
 }
 const canWrite = (role) => role && role !== "viewer";
 
-// LIST (by project)
+// LIST (by project) + filters + search
 router.get("/", async (req, res) => {
-  const { project } = req.query;
+  const { project, status, priority, type, assignee, search } = req.query;
   const { role } = await access(project, req.user._id);
   if (!role) return res.status(403).json({ message: "Not a project member" });
-  const tickets = await Ticket.find({ project }).populate(POP).sort({ order: 1, createdAt: 1 });
+
+  const q = { project };
+  if (status) q.status = status;
+  if (priority) q.priority = priority;
+  if (type) q.type = type;
+  if (assignee === "unassigned") q.assignee = null;
+  else if (assignee) q.assignee = assignee;
+  if (search?.trim()) {
+    const rx = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    q.$or = [{ title: rx }, { description: rx }];
+  }
+
+  const tickets = await Ticket.find(q).populate(POP).sort({ order: 1, createdAt: 1 });
   res.json(tickets);
 });
 

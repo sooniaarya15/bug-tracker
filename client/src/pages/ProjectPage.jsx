@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -8,7 +8,11 @@ import TicketForm from "../components/TicketForm";
 import TicketCard from "../components/TicketCard";
 import MembersPanel from "../components/MembersPanel";
 import Board from "../components/Board";
+import Filters from "../components/Filters";
 import TicketModal from "../components/TicketModal";
+
+const EMPTY = { search: "", status: "", priority: "", assignee: "" };
+const RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 
 export default function ProjectPage() {
   const { id } = useParams();
@@ -21,15 +25,38 @@ export default function ProjectPage() {
   const [showMembers, setShowMembers] = useState(false);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState("");
+  const [filters, setFilters] = useState(EMPTY);
+  const [query, setQuery] = useState(EMPTY); // debounced filters
+  const [sort, setSort] = useState("default");
 
-  async function refreshTickets() {
-    setTickets(await api(`/tickets?project=${id}`));
-  }
+  // search typing ke 300ms baad hi API call
+  useEffect(() => {
+    const t = setTimeout(() => setQuery(filters), 300);
+    return () => clearTimeout(t);
+  }, [filters]);
+
+  const loadTickets = useCallback(async () => {
+    const params = new URLSearchParams({ project: id });
+    Object.entries(query).forEach(([k, v]) => v && params.set(k, v));
+    setTickets(await api(`/tickets?${params}`));
+  }, [id, query]);
 
   useEffect(() => {
     api(`/projects/${id}`).then(setProject).catch((e) => setError(e.message));
-    api(`/tickets?project=${id}`).then(setTickets).catch((e) => setError(e.message));
   }, [id]);
+
+  useEffect(() => {
+    loadTickets().catch((e) => setError(e.message));
+  }, [loadTickets]);
+
+  // list view ke liye client-side sorting
+  const visible = useMemo(() => {
+    const a = [...tickets];
+    if (sort === "newest") a.sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt));
+    else if (sort === "oldest") a.sort((x, y) => new Date(x.createdAt) - new Date(y.createdAt));
+    else if (sort === "priority") a.sort((x, y) => RANK[x.priority] - RANK[y.priority]);
+    return a;
+  }, [tickets, sort]);
 
   if (error) return <p className="text-red-600">{error}</p>;
   if (!project) return <p>Loading…</p>;
@@ -41,11 +68,10 @@ export default function ProjectPage() {
   async function createTicket(form) {
     await api("/tickets", { method: "POST", body: { ...form, project: id } });
     // DAY13: toast.success("Ticket created");
-    await refreshTickets();
+    await loadTickets();
     setShowForm(false);
   }
 
-  // Kanban drag-drop: optimistic update + API save
   async function handleMove(next, affected) {
     const prev = tickets;
     const items = affected.flatMap((k) => next[k].map((t, i) => ({ _id: t._id, status: k, order: i })));
@@ -102,17 +128,26 @@ export default function ProjectPage() {
         </div>
       )}
 
+      <Filters
+        filters={filters}
+        setFilters={setFilters}
+        members={project.members}
+        sort={sort}
+        setSort={setSort}
+        showSort={view === "list"}
+      />
+
       {view === "board" ? (
         <Board tickets={tickets} onMove={handleMove} onSelect={setSelected} canEdit={canEdit} />
-      ) : tickets.length === 0 ? (
-        <p className="text-gray-500">Abhi koi ticket nahi hai.</p>
+      ) : visible.length === 0 ? (
+        <p className="text-gray-500">Koi ticket match nahi hua.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {tickets.map((t) => <TicketCard key={t._id} ticket={t} showStatus onClick={setSelected} />)}
+          {visible.map((t) => <TicketCard key={t._id} ticket={t} showStatus onClick={setSelected} />)}
         </div>
       )}
 
-            {selected && (
+      {selected && (
         <TicketModal
           ticket={selected}
           project={project}
@@ -120,7 +155,7 @@ export default function ProjectPage() {
           canEdit={canEdit}
           isAdmin={isAdmin}
           onClose={() => setSelected(null)}
-          onChanged={refreshTickets}
+          onChanged={loadTickets}
         />
       )}
     </div>
