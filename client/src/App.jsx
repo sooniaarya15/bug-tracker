@@ -4,6 +4,7 @@ import Projects from "./pages/Projects";
 import ProjectPage from "./pages/ProjectPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import Toaster from "./components/Toaster";
 
 export default function App() {
   return (
