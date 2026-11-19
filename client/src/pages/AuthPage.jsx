@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// Backend jaisa hi rule
 const NAME_REGEX = /^[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -23,6 +22,13 @@ export default function AuthPage({ mode }) {
   const [error, setError] = useState("");
   const [nameError, setNameError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    setError("");
+    setNameError("");
+    setShowPassword(false);
+  }, [mode]);
 
   if (user) return <Navigate to="/" replace />;
 
@@ -66,7 +72,7 @@ export default function AuthPage({ mode }) {
           <div>
             <input
               className={`input ${nameError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
-              placeholder="Full name (sirf letters)"
+              placeholder="Full name"
               value={form.name}
               onChange={onNameChange}
               maxLength={50}
@@ -76,7 +82,25 @@ export default function AuthPage({ mode }) {
         )}
 
         <input className="input" type="email" placeholder="Email" value={form.email} onChange={set("email")} required />
-        <input className="input" type="password" placeholder="Password (min 6)" value={form.password} onChange={set("password")} required />
+
+        <div className="relative">
+          <input
+            className="input pr-16"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password (min 6)"
+            value={form.password}
+            onChange={set("password")}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((s) => !s)}
+            className="absolute inset-y-0 right-0 px-3 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <button className="btn-primary w-full" disabled={loading}>
           {loading ? "Please wait…" : isLogin ? "Login" : "Register"}

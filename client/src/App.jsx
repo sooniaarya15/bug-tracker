@@ -8,14 +8,17 @@ import Toaster from "./components/Toaster";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<AuthPage mode="login" />} />
-      <Route path="/register" element={<AuthPage mode="register" />} />
-      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route path="/" element={<Projects />} />
-        <Route path="/projects/:id" element={<ProjectPage />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Toaster />
+      <Routes>
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/register" element={<AuthPage mode="register" />} />
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route path="/" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
