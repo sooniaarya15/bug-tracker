@@ -14,7 +14,6 @@ export default function TicketModal({ ticket, project, me, canEdit, isAdmin, onC
 
   async function save(form) {
     await api(`/tickets/${ticket._id}`, { method: "PUT", body: form });
-    // DAY13: toast.success("Ticket updated");
     await onChanged();
     onClose();
   }
@@ -22,7 +21,6 @@ export default function TicketModal({ ticket, project, me, canEdit, isAdmin, onC
   async function remove() {
     try {
       await api(`/tickets/${ticket._id}`, { method: "DELETE" });
-      // DAY13: toast.success("Ticket deleted");
       await onChanged();
       onClose();
     } catch (e) {
@@ -65,7 +63,7 @@ export default function TicketModal({ ticket, project, me, canEdit, isAdmin, onC
 
           {confirming && (
             <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3">
-              <p className="mb-2 text-sm text-red-700">Pakka delete karna hai? Comments bhi delete ho jayenge.</p>
+              <p className="mb-2 text-sm text-red-700">Are you sure you want to delete this ticket? Its comments will also be deleted.</p>
               <div className="flex gap-2">
                 <button className="btn-danger" onClick={remove}>Yes, delete</button>
                 <button className="btn-secondary" onClick={() => setConfirming(false)}>Cancel</button>

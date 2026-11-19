@@ -47,7 +47,7 @@ export default function MembersPanel({ project, isAdmin, onChange }) {
       </ul>
       {isAdmin && (
         <form onSubmit={add} className="grid gap-2 sm:grid-cols-[2fr_1fr_auto]">
-          <input className="input" type="email" placeholder="Member's email (registered hona chahiye)" value={email}
+          <input className="input" type="email" placeholder="Member's email (must be registered)" value={email}
             onChange={(e) => setEmail(e.target.value)} required />
           <select className="input" value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="admin">admin</option>

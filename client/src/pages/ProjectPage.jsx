@@ -29,7 +29,6 @@ export default function ProjectPage() {
   const [query, setQuery] = useState(EMPTY); // debounced filters
   const [sort, setSort] = useState("default");
 
-  // search typing ke 300ms baad hi API call
   useEffect(() => {
     const t = setTimeout(() => setQuery(filters), 300);
     return () => clearTimeout(t);
@@ -49,7 +48,6 @@ export default function ProjectPage() {
     loadTickets().catch((e) => setError(e.message));
   }, [loadTickets]);
 
-  // list view ke liye client-side sorting
   const visible = useMemo(() => {
     const a = [...tickets];
     if (sort === "newest") a.sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt));
@@ -67,7 +65,6 @@ export default function ProjectPage() {
 
   async function createTicket(form) {
     await api("/tickets", { method: "POST", body: { ...form, project: id } });
-    // DAY13: toast.success("Ticket created");
     await loadTickets();
     setShowForm(false);
   }
@@ -80,7 +77,7 @@ export default function ProjectPage() {
       await api("/tickets/reorder", { method: "PATCH", body: { projectId: id, items } });
     } catch (e) {
       setTickets(prev);
-      alert(e.message); // DAY13: toast.error(e.message);
+      alert(e.message); 
     }
   }
 
@@ -140,7 +137,7 @@ export default function ProjectPage() {
       {view === "board" ? (
         <Board tickets={tickets} onMove={handleMove} onSelect={setSelected} canEdit={canEdit} />
       ) : visible.length === 0 ? (
-        <p className="text-gray-500">Koi ticket match nahi hua.</p>
+        <p className="text-gray-500">No tickets match your filters.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((t) => <TicketCard key={t._id} ticket={t} showStatus onClick={setSelected} />)}

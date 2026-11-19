@@ -14,7 +14,6 @@ export default function Comments({ ticketId, isAdmin }) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticketId]);
 
   async function add(e) {
@@ -70,7 +69,7 @@ export default function Comments({ ticketId, isAdmin }) {
       <h3 className="mb-2 font-semibold">💬 Comments ({comments.length})</h3>
       {error && <p className="mb-2 rounded bg-red-50 p-2 text-sm text-red-600">{error}</p>}
       <div className="mb-3 max-h-72 overflow-y-auto">
-        {comments.length === 0 ? <p className="text-sm text-gray-400">Abhi koi comment nahi.</p> : renderTree()}
+        {comments.length === 0 ? <p className="text-sm text-gray-400">No comments yet.</p> : renderTree()}
       </div>
       <form onSubmit={add} className="space-y-2">
         {replyTo && (

@@ -31,7 +31,6 @@ export default function AuthPage({ mode }) {
   function onNameChange(e) {
     const value = e.target.value;
     setForm({ ...form, name: value });
-    // typing ke time hi error dikhao (khali hone par nahi)
     setNameError(value ? validateName(value) : "");
   }
 
@@ -83,7 +82,7 @@ export default function AuthPage({ mode }) {
           {loading ? "Please wait…" : isLogin ? "Login" : "Register"}
         </button>
         <p className="text-center text-sm text-gray-600">
-          {isLogin ? "Naya user? " : "Already account hai? "}
+          {isLogin ? "New user? " : "Already have an account? "}
           <Link className="text-indigo-600 hover:underline" to={isLogin ? "/register" : "/login"}>
             {isLogin ? "Register" : "Login"}
           </Link>
