@@ -17,7 +17,6 @@ const projectSchema = new Schema(
   { timestamps: true }
 );
 
-// user ka role return karta hai (member nahi hai to null)
 projectSchema.methods.roleOf = function (userId) {
   const m = this.members.find((m) => String(m.user?._id ?? m.user) === String(userId));
   return m ? m.role : null;

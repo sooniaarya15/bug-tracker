@@ -6,7 +6,7 @@ const commentSchema = new Schema(
     ticket: { type: Schema.Types.ObjectId, ref: "Ticket", required: true, index: true },
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     text: { type: String, required: true, trim: true },
-    parent: { type: Schema.Types.ObjectId, ref: "Comment", default: null }, // threaded reply
+    parent: { type: Schema.Types.ObjectId, ref: "Comment", default: null }, 
   },
   { timestamps: true }
 );

@@ -11,7 +11,7 @@ const ticketSchema = new Schema(
     assignee: { type: Schema.Types.ObjectId, ref: "User", default: null },
     reporter: { type: Schema.Types.ObjectId, ref: "User", required: true },
     project: { type: Schema.Types.ObjectId, ref: "Project", required: true, index: true },
-    order: { type: Number, default: () => Date.now() }, // kanban column mein position
+    order: { type: Number, default: () => Date.now() }, 
   },
   { timestamps: true }
 );
