@@ -14,7 +14,6 @@ async function ticketAccess(ticketId, userId) {
   return { ticket, role: project?.roleOf(userId) };
 }
 
-// replies samet saare descendants ke ids
 async function collect(id) {
   const kids = await Comment.find({ parent: id }).distinct("_id");
   let all = [id];

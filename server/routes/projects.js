@@ -28,7 +28,7 @@ async function loadProject(req, res, adminOnly = false) {
 
 const fresh = (id) => Project.findById(id).populate(POP);
 
-// list (jin projects ka user member hai)
+// list
 router.get("/", async (req, res) => {
   const projects = await Project.find({ "members.user": req.user._id }).populate(POP).sort({ createdAt: -1 });
   res.json(projects);

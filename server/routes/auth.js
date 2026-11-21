@@ -9,13 +9,11 @@ const router = Router();
 const sign = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 const publicUser = (u) => ({ _id: u._id, name: u.name, email: u.email });
 
-// Name: sirf letters, space, . ' -  (number/symbol allowed nahi)
 const NAME_REGEX = /^[\p{L}\p{M}][\p{L}\p{M}\s.'-]*$/u;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
-  // extra spaces hatao: "  Rahul   Kumar " -> "Rahul Kumar"
   const name = String(req.body.name || "").trim().replace(/\s+/g, " ");
 
   if (!name || !email?.trim() || !password)
